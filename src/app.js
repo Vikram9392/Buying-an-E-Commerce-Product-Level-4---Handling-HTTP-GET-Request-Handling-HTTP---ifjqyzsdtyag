@@ -11,10 +11,46 @@ const products = JSON.parse(
 
 // Middlewares
 app.use(express.json());
-
+ const{name,price,quantity}=req.body;
+    const newId=products[products.length-1].id+1;
+    const newProduct={name,price,quantity,id:newId}
+    products.push(newProduct);
+    fs.writeFile(`${__dirname}/data/product.json`,JSON.stringify(products),err=>{
+       res.status(201).json({
+        status:"Success",
+        message:"Product added successfully",
+        data:{newProduct}
+      })
+    })
+  })
 // Write PATCH endpoint to buy a product for the client here
 // Endpoint /api/v1/products/:id
+app.patch('/api/v1/products', (req,res) => {
+    res.status(200).json({
+    status:'Success',
+    message:'Details of products fetched successfully',
+    data:{
+        products
+    }
+});
+});
+app.patch('/api/v1/products/:id', (req,res) => {
+    let {id} = req.params;
+    id *=1;
 
+    const product = products.find(product => product.id===id);
+    if(!product){
+        return res.status(404).send({status:"failed", message: "Product not found!"});
+    }
+ 
+    res.status(200).send({
+        status : 'success',
+        message : "Thank you for purchasing Product",
+        data: {
+            product
+        }
+});
+});
 
 
 
